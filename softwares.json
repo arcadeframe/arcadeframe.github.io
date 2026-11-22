@@ -1,5 +1,25 @@
 [
   {
+    "id": "levemaker",
+    "nome": "Leve Maker",
+    "versao": "0.12.2",
+    "descricao": "Diminui vídeos, áudios e fotos da câmera sem perda visível e coloca o arquivo leve no lugar do original, conferindo cada um antes. Tudo roda no seu computador.",
+    "sistemas": "Mac com chip Apple (M1 em diante), macOS 13 ou mais novo. Windows 10 ou 11 com placa de vídeo NVIDIA, Intel ou AMD (versão de teste)",
+    "tamanho": "Mac 28 MB, Windows 87 MB",
+    "data": "2026-11-22",
+    "downloads": [
+      {
+        "rotulo": "Baixar para Mac",
+        "link": "https://arcadeframe.github.io/levemaker/Leve-Maker-Mac.dmg"
+      },
+      {
+        "rotulo": "Baixar para Windows (teste)",
+        "link": "https://arcadeframe.github.io/levemaker/Leve-Maker-Windows-Setup.exe"
+      }
+    ],
+    "instrucoes": "Mac: abra o arquivo baixado e arraste o Leve Maker para a pasta Aplicativos. Na primeira vez, se o Mac disser que não pode verificar o desenvolvedor, abra Ajustes do Sistema, entre em Privacidade e Segurança e clique em Abrir Mesmo Assim. Windows: abra o instalador. Se aparecer \"O Windows protegeu o computador\", clique em Mais informações e depois em Executar assim mesmo. O Leve Maker funciona com um serial: peça o seu ao Ronay."
+  },
+  {
     "id": "seletor",
     "nome": "Seletor",
     "versao": "2.16.1",
