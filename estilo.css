@@ -1,0 +1,51 @@
+:root {
+  --bg: #f6f5f2;
+  --text: #1b1b1a;
+  --muted: #6d6c68;
+  --line: #dcdad4;
+  --accent: #1b1b1a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141413;
+    --text: #ecebe7;
+    --muted: #8f8e89;
+    --line: #2b2b29;
+    --accent: #ecebe7;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 72px 24px 96px; }
+header { margin-bottom: 56px; }
+.marca { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.marca a { color: inherit; text-decoration: none; }
+h1 { font-size: 34px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 12px; }
+header p { color: var(--muted); max-width: 560px; }
+.item { border-top: 1px solid var(--line); padding: 28px 0; }
+.item:last-child { border-bottom: 1px solid var(--line); }
+.topo { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.topo h2 { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.topo h2 a { color: inherit; text-decoration: none; }
+.topo h2 a:hover { text-decoration: underline; }
+.versao { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+.desc { margin: 8px 0 16px; max-width: 600px; }
+.detalhes { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+.unico .detalhes { margin-top: 0; }
+.botoes { display: flex; gap: 10px; flex-wrap: wrap; }
+.botoes a {
+  display: inline-block; padding: 9px 16px; font-size: 14px; font-weight: 500;
+  color: var(--bg); background: var(--accent); text-decoration: none; border-radius: 6px;
+}
+.botoes a.sec { color: var(--text); background: transparent; border: 1px solid var(--line); }
+.botoes a:hover { opacity: .85; }
+.instrucoes { margin-top: 20px; font-size: 14px; color: var(--muted); max-width: 600px; white-space: pre-line; }
+.vazio { color: var(--muted); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 28px 0; }
+.voltar { display: inline-block; margin-top: 32px; font-size: 14px; color: var(--muted); }
+footer { margin-top: 56px; font-size: 14px; color: var(--muted); }
+footer a { color: inherit; }
