@@ -32,7 +32,7 @@
           el.innerHTML = '<p class="vazio">Este software não está disponível no momento.</p>';
           return;
         }
-        document.title = s.nome + ' | Galdino Videomaker';
+        document.title = s.nome + ' | Arcade Frame';
         document.getElementById('titulo').textContent = s.nome;
         document.getElementById('intro').textContent = s.descricao || '';
         var det = detalhes(s);
