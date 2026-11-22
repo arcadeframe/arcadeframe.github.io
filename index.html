@@ -5,61 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Softwares | Galdino Videomaker</title>
 <meta name="description" content="Ferramentas criadas por Ronay Galdino para quem trabalha com vídeo. Download direto.">
-<style>
-  :root {
-    --bg: #f6f5f2;
-    --text: #1b1b1a;
-    --muted: #6d6c68;
-    --line: #dcdad4;
-    --accent: #1b1b1a;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141413;
-      --text: #ecebe7;
-      --muted: #8f8e89;
-      --line: #2b2b29;
-      --accent: #ecebe7;
-    }
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 72px 24px 96px; }
-  header { margin-bottom: 56px; }
-  .marca { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  h1 { font-size: 34px; font-weight: 600; letter-spacing: -.02em; margin: 10px 0 12px; }
-  header p { color: var(--muted); max-width: 520px; }
-  .item { border-top: 1px solid var(--line); padding: 28px 0; scroll-margin-top: 24px; }
-  .item:last-child { border-bottom: 1px solid var(--line); }
-  .item:target { background: linear-gradient(var(--line), var(--line)) left top / 3px 100% no-repeat; padding-left: 16px; }
-  .topo { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .topo h2 { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
-  .versao { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
-  .desc { margin: 8px 0 16px; max-width: 600px; }
-  .detalhes { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
-  .botoes { display: flex; gap: 10px; flex-wrap: wrap; }
-  .botoes a {
-    display: inline-block; padding: 9px 16px; font-size: 14px; font-weight: 500;
-    color: var(--bg); background: var(--accent); text-decoration: none; border-radius: 6px;
-  }
-  .botoes a.sec { color: var(--text); background: transparent; border: 1px solid var(--line); }
-  .botoes a:hover { opacity: .85; }
-  .vazio { color: var(--muted); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 28px 0; }
-  footer { margin-top: 56px; font-size: 14px; color: var(--muted); }
-  footer a { color: inherit; }
-</style>
+<meta property="og:title" content="Softwares | Galdino Videomaker">
+<meta property="og:description" content="Ferramentas criadas por Ronay Galdino para quem trabalha com vídeo. Download direto.">
+<link rel="stylesheet" href="/estilo.css">
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="marca">Galdino Videomaker</div>
-    <h1>Softwares</h1>
-    <p>Ferramentas que eu criei para o meu dia a dia de edição e produção de vídeo. Download direto, sem cadastro.</p>
+    <div class="marca"><a href="/">Galdino Videomaker</a></div>
+    <h1 id="titulo">Softwares</h1>
+    <p id="intro">Ferramentas que eu criei para o meu dia a dia de edição e produção de vídeo. Download direto, sem cadastro.</p>
   </header>
 
   <main id="lista"><p class="vazio">Carregando...</p></main>
@@ -68,44 +23,6 @@
     <p>Ronay Galdino · <a href="https://ogaldinovideomaker.com">ogaldinovideomaker.com</a> · <a href="https://instagram.com/ogaldinovideomaker">@ogaldinovideomaker</a></p>
   </footer>
 </div>
-
-<script>
-function esc(t) {
-  return String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function dataBR(iso) {
-  if (!iso) return '';
-  const [a, m, d] = iso.split('-');
-  return d + '/' + m + '/' + a;
-}
-fetch('softwares.json?v=' + Date.now())
-  .then(r => r.json())
-  .then(lista => {
-    const el = document.getElementById('lista');
-    if (!lista.length) {
-      el.innerHTML = '<p class="vazio">Nenhum software publicado ainda. Volte em breve.</p>';
-      return;
-    }
-    el.innerHTML = lista.map(s => {
-      const det = [s.sistemas, s.tamanho, s.data ? 'Atualizado em ' + dataBR(s.data) : ''].filter(Boolean).map(esc).join(' · ');
-      const botoes = (s.downloads || []).map((d, i) =>
-        '<a href="' + esc(d.link) + '"' + (i ? ' class="sec"' : '') + '>' + esc(d.rotulo) + '</a>'
-      ).join('');
-      return '<section class="item" id="' + esc(s.id) + '">' +
-        '<div class="topo"><h2>' + esc(s.nome) + '</h2>' + (s.versao ? '<span class="versao">v' + esc(s.versao) + '</span>' : '') + '</div>' +
-        '<p class="desc">' + esc(s.descricao) + '</p>' +
-        (det ? '<p class="detalhes">' + det + '</p>' : '') +
-        '<div class="botoes">' + botoes + '</div>' +
-        '</section>';
-    }).join('');
-    if (location.hash) {
-      const alvo = document.querySelector(location.hash);
-      if (alvo) alvo.scrollIntoView();
-    }
-  })
-  .catch(() => {
-    document.getElementById('lista').innerHTML = '<p class="vazio">Não foi possível carregar a lista agora.</p>';
-  });
-</script>
+<script src="/app.js"></script>
 </body>
 </html>
