@@ -57,18 +57,15 @@ jobs:
           $txt = ($m.modulos | ForEach-Object { "$($_.nome): instalado=$($_.instalado) disponivel=$($_.disponivel) $($_.motivo)" }) -join " | "
           echo "::notice title=5 modulos::sistema=$($m.sistema) | $txt"
           try { Invoke-RestMethod http://127.0.0.1:8790/api/fila -Headers @{Origin = "https://site-ruim.com"}; echo "::error title=6 porteiro::site de fora passou" } catch { echo "::notice title=6 porteiro::site de fora recusado (403)" }
+          $l = Invoke-RestMethod http://127.0.0.1:8790/api/licenca
+          echo "::notice title=7 serial::ok=$($l.ok) admin=$($l.admin) motivo=$($l.motivo) codigo do computador=$($l.codigo_maquina)"
+          if (-not $l.codigo_maquina -or $l.codigo_maquina.Length -ne 11) { echo "::error title=7 serial::codigo do computador vazio" }
           $corpo = @{ links = "http://127.0.0.1:9000/filme.mp4"; modo = "video"; resolucao = 720 } | ConvertTo-Json
-          Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body $corpo -ContentType "application/json" | Out-Null
-          $fim = $null
-          for ($i = 0; $i -lt 60; $i++) { Start-Sleep 2; $f = (Invoke-RestMethod http://127.0.0.1:8790/api/fila).fila; $x = $f[-1]; if ($x.estado -in "pronto", "erro") { $fim = $x; break } }
-          if ($fim -and $fim.estado -eq "pronto") { echo "::notice title=7 download::pronto em $($fim.resultado.salvo_em) ($($fim.resultado.tamanho_mb) MB)" } else { echo "::error title=7 download::$($fim.etapa)" }
-          $corpo = @{ links = "https://www.youtube.com/watch?v=jNQXAC9IVRw"; modo = "video"; resolucao = 360 } | ConvertTo-Json
-          Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body $corpo -ContentType "application/json" | Out-Null
-          $fim = $null
-          for ($i = 0; $i -lt 90; $i++) { Start-Sleep 2; $f = (Invoke-RestMethod http://127.0.0.1:8790/api/fila).fila; $x = $f[-1]; if ($x.estado -in "pronto", "erro") { $fim = $x; break } }
-          echo "::notice title=8 youtube (servidor do GitHub costuma ser barrado)::$($fim.estado) $($fim.etapa) $($fim.resultado.salvo_em)"
-          $d = (Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body (@{ links = "http://127.0.0.1:9000/filme.mp4"; modo = "dublar" } | ConvertTo-Json) -ContentType "application/json" -SkipHttpErrorCheck)
-          echo "::notice title=9 dublar sem modulo::$($d.erro)"
+          $r = Invoke-WebRequest -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body $corpo -ContentType "application/json" -SkipHttpErrorCheck
+          echo "::notice title=8 sem serial::$($r.StatusCode) $(($r.Content | ConvertFrom-Json).erro)"
+          $a = Invoke-WebRequest -Method Post -Uri http://127.0.0.1:8790/api/licenca/ativar -Body (@{ codigo = "ME-AAAAAA-BBBBBB" } | ConvertTo-Json) -ContentType "application/json" -SkipHttpErrorCheck
+          echo "::notice title=9 serial errado::$($a.StatusCode) $(($a.Content | ConvertFrom-Json).erro)"
+          & $py -c "import sys; sys.path.insert(0, r'$casa\kit'); import licenca as L; s=bytes([7]*32); p=L.publica_de(s); x=L.gerar(s,'Teste',30,''); print('serial de teste confere:', bool(L.ler(x,p)), L.codigo_maquina())"
           $e = Get-Content "$env:RUNNER_TEMP\srv.err" -Raw
           if ($e -match "Traceback") { echo "::warning title=10 erros no servidor::$(($e -split "`n" | Select-String 'Error' | Select-Object -Last 3) -join ' / ')" } else { echo "::notice title=10 erros no servidor::nenhum" }
           Get-Content "$env:RUNNER_TEMP\srv.err" -Tail 30
