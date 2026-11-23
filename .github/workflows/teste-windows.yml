@@ -1,0 +1,83 @@
+name: Teste Multi Estudio no Windows
+on:
+  push:
+    branches: [teste-multiestudio-windows]
+  workflow_dispatch:
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extrair o download, como a pessoa faria
+        shell: pwsh
+        run: |
+          Expand-Archive -Path teste/Multi-Estudio-Windows.zip -DestinationPath $env:RUNNER_TEMP\baixado -Force
+          Get-ChildItem -Recurse -Depth 1 "$env:RUNNER_TEMP\baixado" | Select-Object -ExpandProperty FullName
+          if (-not (Test-Path "$env:RUNNER_TEMP\baixado\Multi Estudio\Extensao do Chrome\manifest.json")) { echo "::error::falta a pasta da extensão"; exit 1 }
+          echo "::notice title=1 download::zip extraido com instalador, programa, extensao e LEIA-ME"
+      - name: Instalar com o .bat (Windows PowerShell 5, sem perguntas)
+        shell: cmd
+        env:
+          MULTI_AUTOMATICO: "1"
+        run: |
+          cd /d "%RUNNER_TEMP%\baixado\Multi Estudio"
+          call "Instalar Multi Estudio.bat"
+          echo codigo %ERRORLEVEL%
+          type "%USERPROFILE%\Multi Estúdio\instalacao.log"
+      - name: Conferir a instalacao
+        shell: pwsh
+        run: |
+          $casa = Join-Path $env:USERPROFILE "Multi Estúdio"
+          $py = Join-Path $casa "kit\.venv\Scripts\python.exe"
+          if (-not (Test-Path $py)) { echo "::error title=2 instalacao::Python do app nao foi criado"; exit 1 }
+          & $py -c "import yt_dlp, requests, soundfile, numpy, imageio_ffmpeg; print('ok', yt_dlp.version.__version__)"
+          if ($LASTEXITCODE -ne 0) { echo "::error title=2 instalacao::bibliotecas faltando"; exit 1 }
+          & $py -c "import webview; print('pywebview', webview.__version__ if hasattr(webview,'__version__') else '')"
+          $wv = if ($LASTEXITCODE -eq 0) { "pywebview importa" } else { "pywebview NAO importa (app abre no navegador)" }
+          $lnk = Test-Path (Join-Path ([Environment]::GetFolderPath("Desktop")) "Multi Estúdio.lnk")
+          $mb = [math]::Round(((Get-ChildItem -Recurse $casa | Measure-Object Length -Sum).Sum / 1MB))
+          echo "::notice title=2 instalacao::Python pronto; $wv; atalho na Area de Trabalho: $lnk; pasta com $mb MB"
+          & $py -c "import sys; sys.path.insert(0, r'$casa\app'); import janela; print('janela importa')"
+          if ($LASTEXITCODE -ne 0) { echo "::error title=3 janela::app/janela.py nao importa"; exit 1 }
+      - name: Rodar o servidor e baixar um video
+        shell: pwsh
+        run: |
+          $casa = Join-Path $env:USERPROFILE "Multi Estúdio"
+          $py = Join-Path $casa "kit\.venv\Scripts\python.exe"
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\site" | Out-Null
+          & $py -c "import imageio_ffmpeg, subprocess, sys; subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), '-y', '-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc=d=4:s=640x360', '-f', 'lavfi', '-i', 'sine=d=4', '-shortest', '-pix_fmt', 'yuv420p', sys.argv[1]], check=True)" "$env:RUNNER_TEMP\site\filme.mp4"
+          $site = Start-Process -FilePath $py -ArgumentList "-m","http.server","9000" -WorkingDirectory "$env:RUNNER_TEMP\site" -PassThru -WindowStyle Hidden
+          $srv = Start-Process -FilePath $py -ArgumentList "`"$casa\app\servidor_app.py`"" -WorkingDirectory $casa -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\srv.out" -RedirectStandardError "$env:RUNNER_TEMP\srv.err"
+          $ok = $false
+          for ($i = 0; $i -lt 60; $i++) { Start-Sleep 2; try { $st = Invoke-RestMethod http://127.0.0.1:8790/api/status; $ok = $true; break } catch {} }
+          if (-not $ok) { Get-Content "$env:RUNNER_TEMP\srv.err" -Tail 40; echo "::error title=4 servidor::nao subiu"; exit 1 }
+          echo "::notice title=4 servidor::status $($st | ConvertTo-Json -Compress)"
+          $m = Invoke-RestMethod http://127.0.0.1:8790/api/modulos
+          $txt = ($m.modulos | ForEach-Object { "$($_.nome): instalado=$($_.instalado) disponivel=$($_.disponivel) $($_.motivo)" }) -join " | "
+          echo "::notice title=5 modulos::sistema=$($m.sistema) | $txt"
+          try { Invoke-RestMethod http://127.0.0.1:8790/api/fila -Headers @{Origin = "https://site-ruim.com"}; echo "::error title=6 porteiro::site de fora passou" } catch { echo "::notice title=6 porteiro::site de fora recusado (403)" }
+          $corpo = @{ links = "http://127.0.0.1:9000/filme.mp4"; modo = "video"; resolucao = 720 } | ConvertTo-Json
+          Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body $corpo -ContentType "application/json" | Out-Null
+          $fim = $null
+          for ($i = 0; $i -lt 60; $i++) { Start-Sleep 2; $f = (Invoke-RestMethod http://127.0.0.1:8790/api/fila).fila; $x = $f[-1]; if ($x.estado -in "pronto", "erro") { $fim = $x; break } }
+          if ($fim -and $fim.estado -eq "pronto") { echo "::notice title=7 download::pronto em $($fim.resultado.salvo_em) ($($fim.resultado.tamanho_mb) MB)" } else { echo "::error title=7 download::$($fim.etapa)" }
+          $corpo = @{ links = "https://www.youtube.com/watch?v=jNQXAC9IVRw"; modo = "video"; resolucao = 360 } | ConvertTo-Json
+          Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body $corpo -ContentType "application/json" | Out-Null
+          $fim = $null
+          for ($i = 0; $i -lt 90; $i++) { Start-Sleep 2; $f = (Invoke-RestMethod http://127.0.0.1:8790/api/fila).fila; $x = $f[-1]; if ($x.estado -in "pronto", "erro") { $fim = $x; break } }
+          echo "::notice title=8 youtube (servidor do GitHub costuma ser barrado)::$($fim.estado) $($fim.etapa) $($fim.resultado.salvo_em)"
+          $d = (Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8790/api/dublar -Body (@{ links = "http://127.0.0.1:9000/filme.mp4"; modo = "dublar" } | ConvertTo-Json) -ContentType "application/json" -SkipHttpErrorCheck)
+          echo "::notice title=9 dublar sem modulo::$($d.erro)"
+          $e = Get-Content "$env:RUNNER_TEMP\srv.err" -Raw
+          if ($e -match "Traceback") { echo "::warning title=10 erros no servidor::$(($e -split "`n" | Select-String 'Error' | Select-Object -Last 3) -join ' / ')" } else { echo "::notice title=10 erros no servidor::nenhum" }
+          Get-Content "$env:RUNNER_TEMP\srv.err" -Tail 30
+          Stop-Process -Id $srv.Id, $site.Id -Force
+      - name: Abrir de novo (versao igual nao copia de novo)
+        shell: cmd
+        env:
+          MULTI_AUTOMATICO: "1"
+        run: |
+          cd /d "%RUNNER_TEMP%\baixado\Multi Estudio"
+          call "Instalar Multi Estudio.bat"
+          echo ::notice title=11 segunda vez::codigo %ERRORLEVEL%
