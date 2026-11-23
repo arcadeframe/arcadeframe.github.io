@@ -1,5 +1,21 @@
 [
   {
+    "id": "multiestudio",
+    "nome": "Multi Estúdio",
+    "versao": "0.5.0",
+    "descricao": "Baixa vídeo ou só o áudio do YouTube e de mais de mil sites, com fila e extensão do Chrome. No Mac com chip Apple, também dubla vídeos para português e faz narração. Tudo roda no seu computador.",
+    "sistemas": "Windows 10 ou 11 (baixar vídeos). Mac em breve nesta página.",
+    "tamanho": "7 MB para baixar; na primeira abertura ele baixa mais uns 300 MB",
+    "data": "2026-11-22",
+    "downloads": [
+      {
+        "rotulo": "Baixar para Windows",
+        "link": "https://arcadeframe.github.io/multiestudio/Multi-Estudio-Windows.zip"
+      }
+    ],
+    "instrucoes": "Windows: clique com o botão direito no arquivo baixado e escolha Extrair tudo. Abra a pasta Multi Estudio e clique duas vezes em Instalar Multi Estudio. Se aparecer \"O Windows protegeu o computador\", clique em Mais informações e depois em Executar assim mesmo. Na primeira vez ele baixa o básico (uns 300 MB) e cria um atalho na Área de Trabalho. A extensão do Chrome e o passo a passo para instalar estão na mesma pasta, no arquivo LEIA-ME. Versão de teste para amigos."
+  },
+  {
     "id": "levemaker",
     "nome": "Leve Maker",
     "versao": "0.12.2",
