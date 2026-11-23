@@ -4,16 +4,20 @@
     "nome": "Multi Estúdio",
     "versao": "0.5.0",
     "descricao": "Baixa vídeo ou só o áudio do YouTube e de mais de mil sites, com fila e extensão do Chrome. No Mac com chip Apple, também dubla vídeos para português e faz narração. Tudo roda no seu computador.",
-    "sistemas": "Windows 10 ou 11 (baixar vídeos). Mac em breve nesta página.",
+    "sistemas": "Windows 10 ou 11 (baixar vídeos). Mac com chip Apple, macOS 14 ou mais novo (baixar, dublar e narrar).",
     "tamanho": "7 MB para baixar; na primeira abertura ele baixa mais uns 300 MB",
-    "data": "2026-11-22",
+    "data": "2026-11-23",
     "downloads": [
       {
         "rotulo": "Baixar para Windows",
         "link": "https://arcadeframe.github.io/multiestudio/Multi-Estudio-Windows.zip"
+      },
+      {
+        "rotulo": "Baixar para Mac",
+        "link": "https://arcadeframe.github.io/multiestudio/Multi-Estudio-Mac.zip"
       }
     ],
-    "instrucoes": "Windows: clique com o botão direito no arquivo baixado e escolha Extrair tudo. Abra a pasta Multi Estudio e clique duas vezes em Instalar Multi Estudio. Se aparecer \"O Windows protegeu o computador\", clique em Mais informações e depois em Executar assim mesmo. Na primeira vez ele baixa o básico (uns 300 MB) e cria um atalho na Área de Trabalho. A extensão do Chrome e o passo a passo para instalar estão na mesma pasta, no arquivo LEIA-ME. Versão de teste para amigos."
+    "instrucoes": "Dentro do arquivo baixado vem uma pasta com o instalador, a extensão do Chrome e o LEIA-ME com o passo a passo. Windows: clique com o botão direito no arquivo e escolha Extrair tudo; abra a pasta e clique duas vezes em Instalar Multi Estudio. Se aparecer \"O Windows protegeu o computador\", clique em Mais informações e depois em Executar assim mesmo. Mac: abra o arquivo baixado e arraste o Multi Estúdio para Aplicativos. Na primeira vez, se o Mac disser que não pode verificar o app, abra Ajustes do Sistema, entre em Privacidade e Segurança e clique em Abrir Mesmo Assim. O Multi Estúdio funciona com um serial: peça o seu ao Ronay. Versão de teste para amigos."
   },
   {
     "id": "levemaker",
