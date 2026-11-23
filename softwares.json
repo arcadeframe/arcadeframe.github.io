@@ -2,7 +2,7 @@
   {
     "id": "multiestudio",
     "nome": "Multi Estúdio",
-    "versao": "0.6.0",
+    "versao": "0.6.1",
     "descricao": "Baixa vídeo ou só o áudio do YouTube e de mais de mil sites, com fila e extensão do Chrome. No Mac com chip Apple, também dubla vídeos para português (com o novo modo Ultrarrápido, que usa a legenda do próprio YouTube) e faz narração. Tudo roda no seu computador.",
     "sistemas": "Windows 10 ou 11 (baixar vídeos). Mac com chip Apple, macOS 14 ou mais novo (baixar, dublar e narrar).",
     "tamanho": "7 MB para baixar; na primeira abertura ele baixa mais uns 300 MB",
